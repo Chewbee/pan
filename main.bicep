@@ -1,13 +1,34 @@
+
+@description('The type of environment. This must be nonprod or prod.')
+@allowed([
+  'nonprod'
+  'prod'
+])
+param environmentType string
+
+@description('Indicates whether to deploy the storage account for toy manuals.')
+param deployToyManualsStorageAccount bool
+
+@description('A unique suffix to add to resource names that need to be globally unique.')
+@maxLength(13)
+param resourceNameSuffix string = uniqueString(resourceGroup().id)
+
+
 param storageAccounts_xlrepo_name string = 'xlrepo'
-param deploymentRegion string = 'francecentral'
+
+@description('The Azure region into which the resources should be deployed.')
+param deploymentRegion string = resourceGroup().location
+@description('the keyvault')
 param vaults_pankeyvisa_name string = 'pankeyvisa'
+@description('the Tier for Storage')
+param tier string = 'Standard'
 
 resource storageAccounts_xlrepo_name_resource 'Microsoft.Storage/storageAccounts@2021-08-01' = {
   name: storageAccounts_xlrepo_name
   location: deploymentRegion
   sku: {
     name: 'Standard_LRS'
-    tier: 'Standard'
+    tier: tier
   }
   kind: 'StorageV2'
   properties: {
@@ -46,7 +67,7 @@ resource storageAccounts_xlrepo_name_default 'Microsoft.Storage/storageAccounts/
   name: 'default'
   sku: {
     name: 'Standard_LRS'
-    tier: 'Standard'
+    tier: tier
   }
   properties: {
     changeFeed: {
@@ -75,7 +96,7 @@ resource Microsoft_Storage_storageAccounts_fileServices_storageAccounts_xlrepo_n
   name: 'default'
   sku: {
     name: 'Standard_LRS'
-    tier: 'Standard'
+    tier: tier
   }
   properties: {
     protocolSettings: {
